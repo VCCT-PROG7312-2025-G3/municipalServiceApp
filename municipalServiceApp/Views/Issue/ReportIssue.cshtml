@@ -1,0 +1,179 @@
+﻿@model municipalServiceApp.Models.Issue
+
+<h2 style="margin-bottom: 5px;">Report an Issue</h2>
+
+<form asp-action="ReportIssue" method="post" enctype="multipart/form-data">
+
+    <hr/>
+    <!-- Progress Bar -->
+    <style>
+        .progress-container {
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            
+        }
+
+        .progress-bar-custom {
+            display: block;
+            width: 0%;
+            height: 28px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+            line-height: 28px;
+            transition: width .25s ease, background-color .25s ease;
+        }
+
+        .field-check {
+            display: inline-block;
+            margin-left: 8px;
+            font-size: 1.25rem;
+            vertical-align: middle;
+        }
+    </style>
+
+    <div class="progress-container">
+        <div id="progressBar" class="progress-bar-custom" style="background: red;">0%</div>
+    </div>
+    <p id="progressText" style="margin-top: 2px;">Progress: Step 0 of 4 complete</p>
+
+    <hr />
+
+    <!-- Location -->
+    <label>Location</label>
+    <input asp-for="Location" 
+             class="form-control"
+                id="locationBox"
+                placeholder="Enter location"
+                onblur="validateLocation()"/>
+    <span asp-validation-for="Location" id="locationCheck" class="text-danger"></span>
+
+
+    <br />
+
+    <!-- Category -->
+    <label>Category</label>
+    <select asp-for="Category" class="form-control" id="categoryBox">
+        <option value="">-- Select --</option>
+        <option>Garbage</option>
+        <option>Pothole</option>
+        <option>Roads</option>
+        <option>Sanitation</option>
+        <option>Street Light</option>
+        <option>Utilities</option>
+        <option>Watermark</option>
+    </select>
+    <span asp-validation-for="Category" class="text-danger"></span>
+    <br />
+
+    <!-- Description -->
+    <label>Description</label>
+<textarea asp-for="Description"
+          class="form-control"
+          id="descriptionBox"
+          maxlength="200"
+          placeholder="Enter up to 200 characters"></textarea>
+
+    <small id="wordCounter" class="form-text text-muted">0 / 200</small>
+    <span asp-validation-for="Description" class="text-danger"></span>
+
+    <br />
+
+    <!-- Media Attachment -->
+    <label>Attach Media</label>
+    <input type="file" name="mediaFile" class="form-control" id="mediaBox" />
+    <br />
+
+
+    <!-- Buttons -->
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+                function updateProgress() {
+            let step = 0;
+
+            // check location
+            let location = document.getElementById("locationBox").value.trim();
+            if (location.length > 2) step++;
+
+            // check category
+            let category = document.getElementById("categoryBox").value;
+            if (category !== "") step++;
+
+            // check description
+            let desc = document.getElementById("descriptionBox").value.trim();
+            if (desc.length > 4) step++; 
+
+            // check media
+            let media = document.getElementById("mediaBox").files.length;
+            if (media > 0) step++;
+
+            let progressBar = document.getElementById("progressBar");
+            let progressText = document.getElementById("progressText");
+
+            let percent = (step / 4) * 100;
+            progressBar.style.width = percent + "%";
+
+            // Change colours per increment
+            if (percent <= 25) progressBar.style.backgroundColor = "red";
+            else if (percent <= 50) progressBar.style.backgroundColor = "orange";
+            else if (percent <= 75) progressBar.style.backgroundColor = "blue";
+            else progressBar.style.backgroundColor = "green";
+
+            progressBar.innerText = percent + "%";
+            progressText.innerText = "Progress: Step " + step + " of 4 complete";
+        }
+
+        // Attach event listeners
+        document.getElementById("locationBox").addEventListener("input", updateProgress);
+        document.getElementById("categoryBox").addEventListener("change", updateProgress);
+        document.getElementById("descriptionBox").addEventListener("input", updateProgress);
+        document.getElementById("mediaBox").addEventListener("change", updateProgress);
+
+
+        //word count for description box
+        (function () {
+                const box = document.getElementById("descriptionBox");
+                const counter = document.getElementById("wordCounter");
+                if (!box || !counter) return; // safety
+
+                function updateCharCount() {
+                    const len = box.value.length;
+                    counter.textContent = `${len} / 200`;
+                }
+
+                // initialize (useful if editing existing text)
+                updateCharCount();
+
+                // update on input
+                box.addEventListener("input", updateCharCount);
+            })();
+
+        //location check
+         function validateLocation() {
+            let input = document.getElementById("locationInput");
+            let check = document.getElementById("locationCheck");
+
+            if (input.value.trim().length > 2) {
+                check.innerHTML = "✅";
+                updateProgress(1);      
+            } else {
+                check.innerHTML = "❌ Location too short";
+            }
+        }
+
+
+
+        // Attach event listeners
+        document.getElementById("locationBox").addEventListener("input", updateProgress);
+        document.getElementById("categoryBox").addEventListener("change", updateProgress);
+        document.getElementById("descriptionBox").addEventListener("input", updateProgress);
+        document.getElementById("mediaBox").addEventListener("change", updateProgress);
+    </script>
+}
