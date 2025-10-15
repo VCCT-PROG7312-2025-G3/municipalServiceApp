@@ -1,144 +1,433 @@
 ﻿@model municipalServiceApp.Models.Issue
 
-<h2 style="margin-bottom: 5px;">Report an Issue</h2>
-
-<form asp-action="ReportIssue" method="post" enctype="multipart/form-data">
-
-    <hr/>
-    <!-- Progress Bar -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report an Issue</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #7b4dff;
+            --primary-dark: #6240cf;
+            --info: #18a0fb;
+            --info-dark: #0f7cb3;
+            --success: #00c9a7;
+            --success-dark: #008f78;
+            --text-dark: #4a4a4a;
+            --text-medium: #6b6b6b;
+            --text-light: #555;
+            --shadow-light: rgba(0,0,0,0.08);
+            --shadow-medium: rgba(0,0,0,0.12);
+            --shadow-dark: rgba(0,0,0,0.15);
+            --border-light: #e9ecef;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f3f4ff 0%, #ffffff 100%);
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            position: relative;
+        }
+
+            .header::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100px;
+                height: 4px;
+                background: linear-gradient(to right, var(--primary), var(--info), var(--success));
+                border-radius: 2px;
+            }
+
+            .header h2 {
+                font-size: 2.5rem;
+                font-weight: 800;
+                color: var(--text-dark);
+                margin-bottom: 1rem;
+                letter-spacing: -0.5px;
+            }
+
+        .form-container {
+            background: #fff;
+            border-radius: 18px;
+            padding: 40px;
+            box-shadow: 0 10px 30px var(--shadow-light);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .form-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 5px;
+                background: linear-gradient(to right, var(--primary), var(--info), var(--success));
+                opacity: 0.8;
+            }
+
         .progress-container {
             width: 100%;
-            margin-top: 8px;
-            margin-bottom: 8px;
-            
+            margin: 30px 0;
+            background: #f8f9ff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px var(--shadow-light);
         }
 
         .progress-bar-custom {
             display: block;
             width: 0%;
-            height: 28px;
-            border-radius: 8px;
+            height: 40px;
+            border-radius: 12px;
             text-align: center;
             color: white;
-            line-height: 28px;
-            transition: width .25s ease, background-color .25s ease;
+            line-height: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: linear-gradient(135deg, #ff6b6b, #ff8e6b);
         }
 
-        .field-check {
+        .progress-text {
+            text-align: center;
+            color: var(--text-medium);
+            font-weight: 600;
+            margin-top: 12px;
+            font-size: 1rem;
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .form-control, .form-select {
+            background-color: #f8f9ff;
+            border: 1px solid var(--border-light);
+            color: var(--text-dark);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin-bottom: 5px;
+        }
+
+            .form-control:focus, .form-select:focus {
+                background-color: #fff;
+                border-color: var(--primary);
+                color: var(--text-dark);
+                box-shadow: 0 0 0 0.2rem rgba(123, 77, 255, 0.15);
+                transform: translateY(-2px);
+            }
+
+        .char-counter {
+            text-align: right;
+            color: var(--text-medium);
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin: 8px 5px;
+            border: none;
+            transition: all 0.3s;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 5px;
+                height: 5px;
+                background: rgba(255, 255, 255, 0.5);
+                opacity: 0;
+                border-radius: 100%;
+                transform: scale(1, 1) translate(-50%);
+                transform-origin: 50% 50%;
+            }
+
+            .btn:focus:not(:active)::after {
+                animation: ripple 1s ease-out;
+            }
+
+        @@keyframes ripple {
+            0%
+
+        {
+            transform: scale(0, 0);
+            opacity: 0.5;
+        }
+
+        100% {
+            transform: scale(20, 20);
+            opacity: 0;
+        }
+
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #94a1b2, #727f8f);
+            color: #fff;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px var(--shadow-medium);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .validation-icon {
             display: inline-block;
-            margin-left: 8px;
-            font-size: 1.25rem;
+            margin-left: 10px;
+            font-size: 1.2rem;
             vertical-align: middle;
         }
-    </style>
 
-    <div class="progress-container">
-        <div id="progressBar" class="progress-bar-custom" style="background: red;">0%</div>
-    </div>
-    <p id="progressText" style="margin-top: 2px;">Progress: Step 0 of 4 complete</p>
-
-    <hr />
-
-    <!-- Location -->
-    <label>Location</label>
-    <input asp-for="Location" 
-             class="form-control"
-                id="locationBox"
-                placeholder="Enter location"
-                onblur="validateLocation()"/>
-    <span asp-validation-for="Location" id="locationCheck" class="text-danger"></span>
-
-
-    <br />
-
-    <!-- Category -->
-    <label>Category</label>
-    <select asp-for="Category" class="form-control" id="categoryBox">
-        <option value="">-- Select --</option>
-        <option>Garbage</option>
-        <option>Pothole</option>
-        <option>Roads</option>
-        <option>Sanitation</option>
-        <option>Street Light</option>
-        <option>Utilities</option>
-        <option>Watermark</option>
-    </select>
-    <span asp-validation-for="Category" class="text-danger"></span>
-    <br />
-
-    <!-- Description -->
-    <label>Description</label>
-<textarea asp-for="Description"
-          class="form-control"
-          id="descriptionBox"
-          maxlength="200"
-          placeholder="Enter up to 200 characters"></textarea>
-
-    <small id="wordCounter" class="form-text text-muted">0 / 200</small>
-    <span asp-validation-for="Description" class="text-danger"></span>
-
-    <br />
-
-    <!-- Media Attachment -->
-    <label>Attach Media</label>
-    <input type="file" name="mediaFile" class="form-control" id="mediaBox" />
-    <br />
-
-
-    <!-- Buttons -->
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back</a>
-</form>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
-    <script>
-                function updateProgress() {
-            let step = 0;
-
-            // check location
-            let location = document.getElementById("locationBox").value.trim();
-            if (location.length > 2) step++;
-
-            // check category
-            let category = document.getElementById("categoryBox").value;
-            if (category !== "") step++;
-
-            // check description
-            let desc = document.getElementById("descriptionBox").value.trim();
-            if (desc.length > 4) step++; 
-
-            // check media
-            let media = document.getElementById("mediaBox").files.length;
-            if (media > 0) step++;
-
-            let progressBar = document.getElementById("progressBar");
-            let progressText = document.getElementById("progressText");
-
-            let percent = (step / 4) * 100;
-            progressBar.style.width = percent + "%";
-
-            // Change colours per increment
-            if (percent <= 25) progressBar.style.backgroundColor = "red";
-            else if (percent <= 50) progressBar.style.backgroundColor = "orange";
-            else if (percent <= 75) progressBar.style.backgroundColor = "blue";
-            else progressBar.style.backgroundColor = "green";
-
-            progressBar.innerText = percent + "%";
-            progressText.innerText = "Progress: Step " + step + " of 4 complete";
+        .text-success {
+            color: var(--success) !important;
+            font-weight: 600;
         }
 
-        // Attach event listeners
-        document.getElementById("locationBox").addEventListener("input", updateProgress);
-        document.getElementById("categoryBox").addEventListener("change", updateProgress);
-        document.getElementById("descriptionBox").addEventListener("input", updateProgress);
-        document.getElementById("mediaBox").addEventListener("change", updateProgress);
+        .form-section {
+            margin-bottom: 30px;
+        }
 
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--border-light), transparent);
+            margin: 25px 0;
+            border: none;
+        }
 
-        //word count for description box
-        (function () {
+        .header-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            background: rgba(123, 77, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px 0;
+            color: var(--text-medium);
+            font-size: 0.9rem;
+        }
+
+        @@media (max-width: 768px) {
+            .form-container
+
+        {
+            padding: 25px 20px;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+        }
+
+        .btn {
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .header-icon {
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            font-size: 2rem;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h2>Report an Issue</h2>
+            <p class="lead" style="color: var(--text-medium); font-size: 1.2rem;">Help us improve your community by reporting issues</p>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <form asp-action="ReportIssue" method="post" enctype="multipart/form-data">
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar-custom">0%</div>
+                </div>
+                <p id="progressText" class="progress-text">Progress: Step 0 of 4 complete</p>
+
+                <hr class="section-divider" />
+
+                <!-- Location -->
+                <div class="form-section">
+                    <label class="form-label">
+                        <i class="fas fa-map-marker-alt me-2"></i>Location
+                    </label>
+                    <input asp-for="Location"
+                           class="form-control"
+                           id="locationBox"
+                           placeholder="Enter the location where the issue occurred"
+                           onblur="validateLocation()" />
+                    <span asp-validation-for="Location" id="locationCheck" class="text-danger"></span>
+                </div>
+
+                <!-- Category -->
+                <div class="form-section">
+                    <label class="form-label">
+                        <i class="fas fa-tags me-2"></i>Category
+                    </label>
+                    <select asp-for="Category" class="form-control" id="categoryBox">
+                        <option value="">-- Select Category --</option>
+                        <option>Garbage</option>
+                        <option>Pothole</option>
+                        <option>Roads</option>
+                        <option>Sanitation</option>
+                        <option>Street Light</option>
+                        <option>Utilities</option>
+                        <option>Watermark</option>
+                    </select>
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="form-section">
+                    <label class="form-label">
+                        <i class="fas fa-align-left me-2"></i>Description
+                    </label>
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              id="descriptionBox"
+                              maxlength="200"
+                              rows="4"
+                              placeholder="Please describe the issue in detail (up to 200 characters)"></textarea>
+                    <small id="wordCounter" class="char-counter">0 / 200</small>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <!-- Media Attachment -->
+                <div class="form-section">
+                    <label class="form-label">
+                        <i class="fas fa-camera me-2"></i>Attach Media
+                    </label>
+                    <input type="file" name="mediaFile" class="form-control" id="mediaBox" />
+                    <small class="form-text text-muted">Upload photos or documents related to the issue</small>
+                </div>
+
+                <hr class="section-divider" />
+
+                <!-- Buttons -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-2"></i>Submit Report
+                    </button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Home
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="footer">
+            <p>Municipal Service App &copy; 2023 | Issue Reporting System</p>
+        </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+
+        <script>
+            function updateProgress() {
+                let step = 0;
+
+                // check location
+                let location = document.getElementById("locationBox").value.trim();
+                if (location.length > 2) step++;
+
+                // check category
+                let category = document.getElementById("categoryBox").value;
+                if (category !== "") step++;
+
+                // check description
+                let desc = document.getElementById("descriptionBox").value.trim();
+                if (desc.length > 4) step++;
+
+                // check media
+                let media = document.getElementById("mediaBox").files.length;
+                if (media > 0) step++;
+
+                let progressBar = document.getElementById("progressBar");
+                let progressText = document.getElementById("progressText");
+
+                let percent = (step / 4) * 100;
+                progressBar.style.width = percent + "%";
+
+                // Change colors with gradient progression
+                if (percent <= 25) {
+                    progressBar.style.background = "linear-gradient(135deg, #ff6b6b, #ff8e6b)";
+                } else if (percent <= 50) {
+                    progressBar.style.background = "linear-gradient(135deg, #ffa726, #ffb74d)";
+                } else if (percent <= 75) {
+                    progressBar.style.background = "linear-gradient(135deg, #42a5f5, #64b5f6)";
+                } else {
+                    progressBar.style.background = "linear-gradient(135deg, #66bb6a, #81c784)";
+                }
+
+                progressBar.innerText = Math.round(percent) + "%";
+                progressText.innerText = "Progress: Step " + step + " of 4 complete";
+            }
+
+            // Word count for description box
+            (function () {
                 const box = document.getElementById("descriptionBox");
                 const counter = document.getElementById("wordCounter");
                 if (!box || !counter) return; // safety
@@ -146,6 +435,15 @@
                 function updateCharCount() {
                     const len = box.value.length;
                     counter.textContent = `${len} / 200`;
+
+                    // Change color when approaching limit
+                    if (len > 180) {
+                        counter.style.color = "#ff6b6b";
+                        counter.style.fontWeight = "700";
+                    } else {
+                        counter.style.color = "var(--text-medium)";
+                        counter.style.fontWeight = "500";
+                    }
                 }
 
                 // initialize (useful if editing existing text)
@@ -155,25 +453,29 @@
                 box.addEventListener("input", updateCharCount);
             })();
 
-        //location check
-         function validateLocation() {
-            let input = document.getElementById("locationInput");
-            let check = document.getElementById("locationCheck");
+            // Location validation
+            function validateLocation() {
+                let input = document.getElementById("locationBox");
+                let check = document.getElementById("locationCheck");
 
-            if (input.value.trim().length > 2) {
-                check.innerHTML = "✅";
-                updateProgress(1);      
-            } else {
-                check.innerHTML = "❌ Location too short";
+                if (input.value.trim().length > 2) {
+                    check.innerHTML = '<span class="text-success"><i class="fas fa-check-circle validation-icon"></i> Location looks good!</span>';
+                } else {
+                    check.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle validation-icon"></i> Please enter a valid location</span>';
+                }
             }
-        }
 
+            // Attach event listeners
+            document.getElementById("locationBox").addEventListener("input", updateProgress);
+            document.getElementById("categoryBox").addEventListener("change", updateProgress);
+            document.getElementById("descriptionBox").addEventListener("input", updateProgress);
+            document.getElementById("mediaBox").addEventListener("change", updateProgress);
 
-
-        // Attach event listeners
-        document.getElementById("locationBox").addEventListener("input", updateProgress);
-        document.getElementById("categoryBox").addEventListener("change", updateProgress);
-        document.getElementById("descriptionBox").addEventListener("input", updateProgress);
-        document.getElementById("mediaBox").addEventListener("change", updateProgress);
-    </script>
-}
+            // Initialize progress on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                updateProgress();
+            });
+        </script>
+    }
+</body>
+</html>

@@ -9,13 +9,13 @@ namespace municipalServiceApp.Controllers
 {
     public class HomeController : Controller
     {
-        // GET: Home page
+        
         public IActionResult Index()
         {
             return View();
         }
 
-        // GET: Feedback / Updates
+        //GOES TO FEEDBACK TAB
         public IActionResult FeedbackUpdates(string searchCategory, string searchLocation, DateTime? searchDate)
         {
             var issues = IssueQueueService.GetAll().AsQueryable();
@@ -34,13 +34,11 @@ namespace municipalServiceApp.Controllers
                 .ThenBy(i => i.DateReported)
                 .ToList();
 
-            // Optional: for filter dropdowns in the view
             ViewBag.Categories = new List<string> { "Pothole", "Streetlight", "Water Leak", "Garbage" };
 
             return View(filteredIssues);
         }
 
-        // Optional: Privacy page
         public IActionResult Privacy()
         {
             return View();
