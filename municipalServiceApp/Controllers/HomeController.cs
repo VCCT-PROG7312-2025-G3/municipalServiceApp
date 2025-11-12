@@ -9,11 +9,13 @@ namespace municipalServiceApp.Controllers
 {
     public class HomeController : Controller
     {
-        
+
         public IActionResult Index()
         {
+            ViewBag.ShowThankYou = TempData["ShowThankYou"];
             return View();
         }
+
 
         //GOES TO FEEDBACK TAB
         public IActionResult FeedbackUpdates(string searchCategory, string searchLocation, DateTime? searchDate)

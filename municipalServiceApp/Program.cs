@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using municipalServiceApp.Services; // make sure to include your namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
 builder.Services.AddControllersWithViews();
+
+// ? Register RequestStatusService as a singleton
+builder.Services.AddSingleton<RequestStatusService>();
 
 var app = builder.Build();
 

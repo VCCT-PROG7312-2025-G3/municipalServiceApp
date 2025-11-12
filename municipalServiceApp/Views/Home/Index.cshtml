@@ -383,20 +383,19 @@
             </div>
         </div>
 
-        <div class="app-card disabled-overlay">
-            <span class="coming-soon-badge">Coming Soon</span>
+        <div class="app-card">
             <div class="card-content">
                 <div class="card-icon success">
                     <i class="fas fa-clipboard-list"></i>
                 </div>
                 <h3>Service Request Status</h3>
                 <p>Track the progress of your service requests and reported issues</p>
-                <a href="#" class="btn btn-success disabled">
+                <a asp-controller="ServiceRequest" asp-action="Index" class="btn btn-success">
                     Check Status
                 </a>
-                <span class="coming-soon">Feature in development</span>
             </div>
         </div>
+
 
         <div class="footer">
             <p>Municipal Service App &copy; 2023 | Serving our community</p>
@@ -429,12 +428,12 @@
     <script>
         @if (TempData["ShowThankYou"] != null && (bool)TempData["ShowThankYou"])
         {
-                <text>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var myModal = new bootstrap.Modal(document.getElementById('thankYouModal'));
-                        myModal.show();
-                    });
-                </text>
+                    <text>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var myModal = new bootstrap.Modal(document.getElementById('thankYouModal'));
+                            myModal.show();
+                        });
+                    </text>
         }
     </script>
 </body>
