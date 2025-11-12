@@ -2,7 +2,7 @@ Municipal Service Application ReadMe
 
 How to compile the program
 
-•	Open Visual Studio 2022
+/n •	Open Visual Studio 2022
 •	Click “Open project or solution”
 •	Find the project’s folder on your computer and select the “.sln” file.
 
