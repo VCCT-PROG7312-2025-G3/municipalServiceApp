@@ -16,3 +16,5 @@ Use the features
 •	Report an issue using the “Report Issue” option
 •	Browse local events and through the “Local events and announcements” option
 •	View your submitted requests in the “Service Request Status” 
+
+Thank you
